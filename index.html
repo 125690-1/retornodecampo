@@ -1,0 +1,1237 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RETORNO DE CAMPO</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>📃</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --primary-color: #0077b6;
+    --secondary-color: #00b4d8;
+    --accent-color: #90e0ef;
+    --background-color: #f8f9fa;
+    --text-color: #333;
+    --white: #fff;
+  }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 40px 20px;
+  }
+
+  .container {
+    max-width: 900px;
+    background: var(--white);
+    border-radius: 12px;
+    margin: auto;
+    padding: 40px 30px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  h2, h3 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin: 15px 0 5px;
+    color: #444;
+  }
+
+  input[type="text"],
+  input[type="tel"],
+  input[type="date"],
+  select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 14px;
+    transition: 0.3s;
+  }
+
+  input:focus,
+  select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px rgba(0, 119, 182, 0.2);
+    outline: none;
+  }
+
+  .section {
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 20px;
+  }
+
+  .ordem-servico-buttons {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: nowrap;
+  }
+
+  .ordem-servico-buttons button {
+    width: 125px;
+    border: none;
+    border-radius: 17px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.3s;
+    color: var(--white);
+    font-size: 15px;
+  }
+
+  .button-sim-nao {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px auto;
+    flex-wrap: wrap;
+  }
+
+  .button-sim-nao button {
+    width: 100px;
+    border: none;
+    border-radius: 17px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.3s;
+    color: var(--white);
+    font-size: 15px;
+  }
+
+  .button-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px auto;
+    flex-wrap: wrap;
+  }
+
+  .button-group button {
+    width: 300px;
+    border: none;
+    border-radius: 17px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.3s;
+    color: var(--white);
+    font-size: 15px;
+  }
+
+  .button-inline {
+    background: var(--primary-color);
+  }
+
+  .button-inline:hover {
+    background: #005f8a;
+  }
+
+  .button-gerar { background: #ffb703; color: var(--text-color); }
+  .button-gerar:hover { background: #ff9f1c; }
+  .button-whatsapp { background: #06d6a0; }
+  .button-whatsapp:hover { background: #00b383; }
+
+  .btn-opcao {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s;
+  }
+
+  .verde {
+    background-color: #00d6b3;
+  }
+
+  .vermelho {
+    background-color: #ec407a;
+  }
+
+  .desabilitado {
+    background-color: #ccc !important;
+    cursor: default;
+  }
+
+  .preview-box {
+    background: #f1f1f1;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+    font-family: monospace;
+    color: #444;
+  }
+
+  img.logo {
+    display: block;
+    margin: 30px auto 0;
+    width: 180px;
+  }
+
+  @media (max-width: 600px) {
+    .button-group { flex-direction: column; }
+  }
+
+  .data-horas {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  }
+
+  .data-only {
+    width: 100%;
+  }
+
+  .horas-dupla {
+    display: flex;
+    gap: 40px;
+  }
+
+  .input-group {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .input-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  /* Responsividade para telas maiores */
+  @media (min-width: 700px) {
+    .data-horas {
+      flex-direction: row;
+      align-items: flex-end;
+    }
+
+    .data-only {
+      flex: 1;
+    }
+
+    .horas-dupla {
+      flex: 2;
+    }
+  }
+
+  .input-container {
+      display: none; /* O input começa invisível */
+      margin-top: 10px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>RETORNO DE CAMPO</h2>
+
+  <div class="section">
+    
+    <h3>Preencha os dados da Equipe</h3>
+    
+    <label for="tipoequipe">TIPO DE EQUIPE:</label>
+    <select id="tipoequipe" onchange="verificarOutroLead()">
+      <option value=""></option>
+      <option value="leve">LEVE</option>
+      <option value="linha viva">LINHA VIVA</option>
+      <option value="pesada">PESADA</option>
+      </select>
+
+    <label for="equipe">LEAD:</label>
+    <input type="text" list="lead" id="equipe" name="equipe">
+    <datalist id="lead">
+      <option value="DFD-AI-07B">
+      <option value="DFD-AI-13B">
+      <option value="DFD-AI-15B">
+      <option value="DFD-AI-16B">
+      <option value="DFD-AI-17B">
+      <option value="DFD-AP-01C">
+      <option value="DFD-AP-01D">
+      <option value="DFD-AP-02B">
+      <option value="DFD-AP-02C">
+      <option value="DFD-AP-03C">
+      <option value="DFD-AP-04D">
+      <option value="DFD-AP-05C">
+      <option value="DFD-AP-07B">
+      <option value="DFD-AP-08C">
+      <option value="DFD-AP-10C">
+      <option value="DFD-AP-11C">
+      <option value="DFD-AP-12B">
+      <option value="DFD-AP-14B">
+      <option value="DFD-AP-15B">
+      <option value="DFD-AP-30B">
+      <option value="DFD-AP-30C">
+      <option value="DFD-AP-31B">
+      <option value="DFD-AP-31C">
+      <option value="DFD-AP-32B">
+      <option value="DFD-AP-32C">
+      <option value="DFD-AP-33B">
+      <option value="DFD-AP-33C">
+      <option value="DFD-AP-34C">
+      <option value="DFD-EP-61B">
+      <option value="DFD-LL-41B">
+      <option value="DFD-LL-43B">
+      <option value="DFD-LR-48B">
+      <option value="DFD-LR-49B">
+      <option value="DFD-PP-66B">
+      <option value="DFD-PP-67B">
+      <option value="DFD-RD-01B">
+      <option value="DFD-RD-01C">
+      <option value="DFD-RD-02C">
+      <option value="DFD-RD-03B">
+      <option value="DFD-RD-03C">
+      <option value="DFD-RD-04B">
+      <option value="DFD-RD-04C">
+      <option value="DFD-RD-05B">
+      <option value="DFD-RD-05C">
+      <option value="DFD-RD-06B">
+      <option value="DFD-RD-07B">
+      <option value="DFD-RD-10C">
+      <option value="DFD-RD-12C">
+      <option value="DFD-RD-14B">
+      <option value="DFD-RD-16B">
+      <option value="DFD-RD-17B">
+      <option value="DFD-SG-01B">
+      <option value="DFD-SG-01C">
+      <option value="DFD-SG-01D">
+      <option value="DFD-SG-02B">
+      <option value="DFD-SG-02C">
+      <option value="DFD-SG-02D">
+      <option value="DFD-SG-03B">
+      <option value="DFD-SG-03C">
+      <option value="DFD-SG-03D">
+      <option value="DFD-SG-04B">
+      <option value="DFD-SG-04C">
+      <option value="DFD-SG-04D">
+      <option value="DFD-SG-05B">
+      <option value="DFD-SG-05C">
+      <option value="DFD-SG-05D">
+      <option value="DFD-SG-06B">
+      <option value="DFD-SG-06C">
+      <option value="DFD-SG-07B">
+      <option value="DFD-SG-07C">
+      <option value="DFD-SG-08B">
+      <option value="DFD-SG-08C">
+      <option value="DFD-SG-09B">
+      <option value="DFD-SG-09C">
+      <option value="DFD-SG-11C">
+      <option value="DFD-SG-12B">
+      <option value="DFD-SG-12C">
+      <option value="DFD-SG-13B">
+      <option value="DFD-SG-14B">
+      <option value="DFD-SG-15B">
+      <option value="DFD-SG-16B">
+      <option value="DFD-SG-17B">
+      <option value="DFD-SG-18B">
+      <option value="DFD-SG-30B">
+      <option value="DFD-SG-30C">
+      <option value="DFD-SG-31B">
+      <option value="DFD-SG-31C">
+      <option value="DFD-SG-32B">
+      <option value="DFD-SG-33B">
+      <option value="DFD-SG-34B">
+      <option value="DFD-SG-35B">
+      <option value="DFD-SI-01C">
+      <option value="DFD-SI-01D">
+      <option value="DFD-SI-02C">
+      <option value="DFD-SI-02D">
+      <option value="DFD-SI-03D">
+      <option value="DFD-SI-04D">
+      <option value="DFD-SI-05B">
+      <option value="DFD-SI-05D">
+      <option value="DFD-SI-06B">
+      <option value="DFD-SI-06C">
+      <option value="DFD-SI-07B">
+      <option value="DFD-SI-08B">
+      <option value="DFD-SI-09C">
+      <option value="DFD-SI-10C">
+      <option value="DFD-SI-13B">
+      <option value="DFD-SI-14B">
+      <option value="DFD-SI-15B">
+      <option value="DFD-SI-16B">
+      <option value="DFD-SI-17B">
+      <option value="DFJ-AI-01C">
+      <option value="DFJ-AI-14B">
+      <option value="DFJ-AI-14C">
+      <option value="DFJ-AI-21B">
+      <option value="DFJ-AI-22B">
+      <option value="DFJ-AP-01B">
+      <option value="DFJ-AP-01C">
+      <option value="DFJ-AP-01D">
+      <option value="DFJ-AP-02B">
+      <option value="DFJ-AP-02C">
+      <option value="DFJ-AP-02D">
+      <option value="DFJ-AP-03B">
+      <option value="DFJ-AP-03C">
+      <option value="DFJ-AP-04B">
+      <option value="DFJ-AP-04C">
+      <option value="DFJ-AP-05C">
+      <option value="DFJ-AP-05D">
+      <option value="DFJ-AP-06B">
+      <option value="DFJ-AP-06C">
+      <option value="DFJ-AP-07C">
+      <option value="DFJ-AP-08B">
+      <option value="DFJ-AP-08C">
+      <option value="DFJ-AP-09B">
+      <option value="DFJ-AP-09C">
+      <option value="DFJ-AP-10B">
+      <option value="DFJ-AP-10C">
+      <option value="DFJ-AP-11B">
+      <option value="DFJ-AP-11C">
+      <option value="DFJ-AP-12C">
+      <option value="DFJ-AP-13B">
+      <option value="DFJ-AP-13C">
+      <option value="DFJ-AP-14B">
+      <option value="DFJ-AP-14C">
+      <option value="DFJ-AP-15B">
+      <option value="DFJ-AP-15C">
+      <option value="DFJ-AP-16B">
+      <option value="DFJ-AP-16C">
+      <option value="DFJ-AP-17B">
+      <option value="DFJ-AP-18B">
+      <option value="DFJ-AP-19B">
+      <option value="DFJ-AP-20B">
+      <option value="DFJ-AP-21B">
+      <option value="DFJ-AP-22B">
+      <option value="DFJ-AP-30B">
+      <option value="DFJ-AP-30C">
+      <option value="DFJ-AP-31B">
+      <option value="DFJ-AP-31C">
+      <option value="DFJ-AP-32B">
+      <option value="DFJ-AP-32C">
+      <option value="DFJ-AP-33B">
+      <option value="DFJ-AP-33C">
+      <option value="DFJ-AP-34B">
+      <option value="DFJ-AP-35B">
+      <option value="DFJ-EP-01B">
+      <option value="DFJ-EP-01D">
+      <option value="DFJ-EP-02B">
+      <option value="DFJ-EP-02D">
+      <option value="DFJ-LC-01B">
+      <option value="DFJ-LE-01B">
+      <option value="DFJ-LE-02B">
+      <option value="DFJ-LR-02B">
+      <option value="DFJ-LR-03B">
+      <option value="DFJ-PD-01B">
+      <option value="DFJ-PD-02B">
+      <option value="DFJ-PD-03B">
+      <option value="DFJ-PD-04B">
+      <option value="DFJ-PD-05B">
+      <option value="DFJ-PD-06B">
+      <option value="DFJ-PD-10B">
+      <option value="DFJ-PD-13B">
+      <option value="DFJ-PD-15B">
+      <option value="DFJ-PD-18B">
+      <option value="DFJ-PK-01B">
+      <option value="DFJ-RD-01C">
+      <option value="DFJ-RD-02C">
+      <option value="DFJ-RD-03C">
+      <option value="DFJ-RD-04C">
+      <option value="DFJ-RD-06C">
+      <option value="DFJ-RD-07C">
+      <option value="DFJ-RD-08B">
+      <option value="DFJ-RD-08C">
+      <option value="DFJ-RD-10C">
+      <option value="DFJ-RD-11C">
+      <option value="DFJ-RD-12C">
+      <option value="DFJ-RD-13B">
+      <option value="DFJ-RD-14B">
+      <option value="DFJ-RD-15C">
+      <option value="DFJ-RD-16C">
+      <option value="DFJ-RD-18B">
+      <option value="DFJ-RD-20B">
+      <option value="DFJ-RD-21B">
+      <option value="DFJ-RT-16B">
+      <option value="DFJ-SG-01B">
+      <option value="DFJ-SG-01C">
+      <option value="DFJ-SG-01D">
+      <option value="DFJ-SG-02B">
+      <option value="DFJ-SG-02C">
+      <option value="DFJ-SG-02D">
+      <option value="DFJ-SG-03B">
+      <option value="DFJ-SG-03C">
+      <option value="DFJ-SG-03D">
+      <option value="DFJ-SG-04B">
+      <option value="DFJ-SG-04C">
+      <option value="DFJ-SG-04D">
+      <option value="DFJ-SG-05B">
+      <option value="DFJ-SG-05C">
+      <option value="DFJ-SG-05D">
+      <option value="DFJ-SG-06B">
+      <option value="DFJ-SG-06C">
+      <option value="DFJ-SG-07C">
+      <option value="DFJ-SG-08B">
+      <option value="DFJ-SG-08C">
+      <option value="DFJ-SG-09B">
+      <option value="DFJ-SG-09C">
+      <option value="DFJ-SG-10B">
+      <option value="DFJ-SG-10C">
+      <option value="DFJ-SG-11B">
+      <option value="DFJ-SG-11C">
+      <option value="DFJ-SG-12C">
+      <option value="DFJ-SG-13B">
+      <option value="DFJ-SG-13C">
+      <option value="DFJ-SG-14B">
+      <option value="DFJ-SG-14C">
+      <option value="DFJ-SG-15B">
+      <option value="DFJ-SG-15C">
+      <option value="DFJ-SG-16B">
+      <option value="DFJ-SG-16C">
+      <option value="DFJ-SG-17B">
+      <option value="DFJ-SG-18B">
+      <option value="DFJ-SG-19B">
+      <option value="DFJ-SG-20B">
+      <option value="DFJ-SG-21B">
+      <option value="DFJ-SG-22B">
+      <option value="DFJ-SG-30B">
+      <option value="DFJ-SG-30C">
+      <option value="DFJ-SG-31B">
+      <option value="DFJ-SG-31C">
+      <option value="DFJ-SG-32B">
+      <option value="DFJ-SG-32C">
+      <option value="DFJ-SG-33B">
+      <option value="DFJ-SG-33C">
+      <option value="DFJ-SG-34B">
+      <option value="DFJ-SG-34C">
+      <option value="DFJ-SG-35B">
+      <option value="DFJ-SG-35C">
+      <option value="DFJ-SG-36B">
+      <option value="DFJ-SG-36C">
+      <option value="DFJ-SG-37B">
+      <option value="DFJ-SG-37C">
+      <option value="DFJ-SG-38B">
+      <option value="DFJ-SG-39B">
+      <option value="DFJ-SI-01C">
+      <option value="DFJ-SI-01D">
+      <option value="DFJ-SI-02B">
+      <option value="DFJ-SI-02C">
+      <option value="DFJ-SI-02D">
+      <option value="DFJ-SI-03B">
+      <option value="DFJ-SI-03C">
+      <option value="DFJ-SI-03D">
+      <option value="DFJ-SI-04D">
+      <option value="DFJ-SI-05C">
+      <option value="DFJ-SI-05D">
+      <option value="DFJ-SI-06B">
+      <option value="DFJ-SI-06C">
+      <option value="DFJ-SI-08C">
+      <option value="DFJ-SI-09B">
+      <option value="DFJ-SI-10B">
+      <option value="DFJ-SI-10C">
+      <option value="DFJ-SI-12C">
+      <option value="DFJ-SI-13B">
+      <option value="DFJ-SI-13C">
+      <option value="DFJ-SI-14B">
+      <option value="DFJ-SI-14C">
+      <option value="DFJ-SI-15C">
+      <option value="DFJ-SI-21B">
+      <option value="DFJ-SI-22B">
+      <option value="DFJ-SP-07C">
+      <option value="DFM-AP-01B">
+      <option value="DFM-AP-01C">
+      <option value="DFM-AP-02C">
+      <option value="DFM-AP-04C">
+      <option value="DFM-AP-05C">
+      <option value="DFM-AP-30B">
+      <option value="DFM-AP-30C">
+      <option value="DFM-AP-31B">
+      <option value="DFM-AP-31C">
+      <option value="DFM-AP-32B">
+      <option value="DFM-AP-32C">
+      <option value="DFM-AP-33B">
+      <option value="DFM-AP-33C">
+      <option value="DFM-AP-34B">
+      <option value="DFM-AP-34C">
+      <option value="DFM-AP-35C">
+      <option value="DFM-PD-07B">
+      <option value="DFM-PD-08B">
+      <option value="DFM-PD-10B">
+      <option value="DFM-PD-11B">
+      <option value="DFM-PD-12B">
+      <option value="DFM-RD-01B">
+      <option value="DFM-RD-01C">
+      <option value="DFM-RD-03B">
+      <option value="DFM-RD-03C">
+      <option value="DFM-RD-05C">
+      <option value="DFM-RD-06B">
+      <option value="DFM-RD-06C">
+      <option value="DFM-RD-07B">
+      <option value="DFM-RD-07C">
+      <option value="DFM-RD-08B">
+      <option value="DFM-RD-09B">
+      <option value="DFM-RD-10B">
+      <option value="DFM-RD-12B">
+      <option value="DFM-RD-13B">
+      <option value="DFM-SG-01B">
+      <option value="DFM-SG-01C">
+      <option value="DFM-SG-02B">
+      <option value="DFM-SG-02C">
+      <option value="DFM-SG-03B">
+      <option value="DFM-SG-03C">
+      <option value="DFM-SG-04B">
+      <option value="DFM-SG-04C">
+      <option value="DFM-SG-05C">
+      <option value="DFM-SG-06B">
+      <option value="DFM-SG-06C">
+      <option value="DFM-SG-07B">
+      <option value="DFM-SG-07C">
+      <option value="DFM-SG-08B">
+      <option value="DFM-SG-09B">
+      <option value="DFM-SG-10B">
+      <option value="DFM-SG-11B">
+      <option value="DFM-SG-12B">
+      <option value="DFM-SG-13B">
+      <option value="DFM-SG-30B">
+      <option value="DFM-SG-31B">
+      <option value="DFM-SG-31C">
+      <option value="DFM-SG-33C">
+      <option value="DFM-SI-01B">
+      <option value="DFM-SI-04C">
+      <option value="DFM-SI-10B">
+    </datalist>
+
+    <label for="supervisor">SUPERVISOR:</label>
+    <h5>Selecione o supervisor responsável pela equipe no dia da execução desse serviço</h5>
+    <input type="text" list="nomedosupervisor" id="supervisor" name="supervisor">
+    <datalist id="nomedosupervisor">
+      <option value="ADRIANO ACACIO DUARTE">
+    </datalist>
+
+    <label for="nomedocomponente">NOME DO COMPONENTE:</label>
+    <input type="text" list="componentes" id="nomedocomponente" name="componentes">
+    <datalist id="componentes">
+      <option value="ADRIANO ACACIO DUARTE">
+      <option value="AGENOR ALVES DA SILVA">
+      <option value="ALDENIR DE CASTRO DA SILVA">
+      <option value="ALMIR MOREIRA MACIEL">
+      <option value="ANDERSON BARBOSA DA SILVA">
+      <option value="ANTONIO ELENILSON LIMA DE SOUSA">
+      <option value="ANTONIO MARCOS MARTINS TEMOTEO">
+      <option value="ANTÔNIO VICTOR DE LIMA SANTOS">
+      <option value="AUGUSTO DE SALES LIRA">
+      <option value="AUGUSTO HOLANDA ARAUJO">
+      <option value="CARLOS AUGUSTO DE SOUSA">
+      <option value="CASSIO WESLLEY PINHEIRO">
+      <option value="CRISTIANO DOS SANTOS MORAIS">
+      <option value="DANIEL MENEZES GIRAO">
+      <option value="ELIZEU DA SILVA RIBEIRO">
+      <option value="EMILIO MARCOS TEIXEIRA DA SILVA">
+      <option value="FRANCISCO ADERLAN ABREU DO NASCIMENTO">
+      <option value="FRANCISCO AUDIR NOGUEIRA DA SILVA">
+      <option value="FRANCISCO CHARLE DE LIMA">
+      <option value="FRANCISCO EDINALDO DE SOUSA BRAZ">
+      <option value="FRANCISCO FELIPE SILVA FERREIRA">
+      <option value="FRANCISCO IRANILDO DA PENHA">
+      <option value="FRANCISCO MARCELO GOMES PEREIRA">
+      <option value="FRANCISCO ODESIO CORREIA DE BRITO">
+      <option value="FRANCISCO ROBERTO BARROS SILVA">
+      <option value="FRANCISCO VLADIMIR DA SILVA LIMA">
+      <option value="GILDENIR JOSÉ SANTIAGO NUNES">
+      <option value="GIRLANDO PORTELA DOS SANTOS">
+      <option value="ISAIAS ROCHA DA SILVEIRA">
+      <option value="JADER VIANA GALDINO">
+      <option value="JEAN CLEYSTER CAVALCANTE LIMA">
+      <option value="JEFFERSON WENDEL ARRUDA BARBOSA">
+      <option value="JOSE CLEISIO ARAUJO">
+      <option value="JOSÉ WIVO SOUSA DA SILVA">
+      <option value="JOSEAN COSTA DE SOUZA">
+      <option value="LUIZ EDUARDO FERNANDES DO NASCIMENTO">
+      <option value="MANOEL ARAÚJO DOS SANTOS">
+      <option value="MARCOS AURELIO PEREIRA DE MATOS">
+      <option value="MARDONE ALVES BARBOSA">
+      <option value="PAULO HENRIQUE PEREIRA DA SILVA">
+      <option value="RAFAEL AMORIM DA SILVA">
+      <option value="RARISON BARROSO RODRIGUES">
+      <option value="RONALDO DA SILVA MESQUITA">
+      <option value="VALDECIR ALVES MOREIRA">
+    </datalist>
+  </div>
+
+  <div class="section">
+    <h3>Preencha os dados do Serviço</h3>
+    <label for="tiposervico">TIPO DE SERVIÇO:</label>
+    <select id="tiposervico" onchange="alterarCampos()">  <!-- Aqui você adiciona o evento onchange -->
+      <option value=""></option>
+      <option value="manutenção corretiva (emergência)">MANUTENÇÃO CORRETIVA (EMERGÊNCIA)</option>
+      <option value="manutenção preventiva (programado)">MANUTENÇÃO PREVENTIVA (PROGRAMADO)</option>
+    </select>
+
+    <label>OT:</label>
+    <input type="tel" id="ot" disabled>
+
+    <label>SGM:</label>
+    <input type="tel" id="sgm" disabled>
+
+    <label>SGD:</label>
+    <input type="tel" id="sgd" disabled>
+
+    <label>ANE:</label>
+    <input type="tel" id="ane" disabled>
+
+    <label>ORDEM DE SERVIÇO:</label>
+    <div class="ordem-servico-buttons">
+      <button class="button-inline" onclick="configurarInput('INC')" id="btnINC" disabled>INC</button>
+      <button class="button-inline" onclick="configurarInput('DT')" id="btnDT" disabled>DT</button>
+      <button class="button-inline" onclick="configurarInput('BA')" id="btnBA" disabled>BA</button>
+    </div>
+
+    <div id="input-container" class="input-container">
+      <label for="input-ordem">Digite a Ordem de Serviço:</label>
+      <input type="text" id="input-ordem" />
+    </div>
+
+    <label>APR DIGITAL:</label>
+    <input type="tel" id="apr">
+  </div>
+
+  <div class="section">
+    <h3>Preencha Informação de campo</h3>
+    <label>TRAFO:</label>
+    <input type="text" id="traf">
+
+    <label>TOMBAMENTO:</label>
+    <input type="text" id="Tomb">
+
+    <label>ESTRUTURA:</label>
+    <input type="text" id="estrut">
+
+    <label>ALIMENTADOR:</label>
+    <input type="text" id="alimentador">
+
+    <label>ENDEREÇO:</label>
+    <input type="text" id="endereco">
+
+    <label for="municipio">MUNICÍPIO:</label>
+    <input type="text" list="listamunicipio" id="municipio" name="listamunicipio">
+    <datalist id="listamunicipio">
+      <option value="ABAIARA">
+      <option value="ACARAPE">
+      <option value="ACARAU">
+      <option value="ACOPIARA">
+      <option value="AIUABA">
+      <option value="ALCANTARAS">
+      <option value="ALTANEIRA">
+      <option value="ALTO SANTO">
+      <option value="AMONTADA">
+      <option value="ANTONINA DO NORTE">
+      <option value="APUIARES">
+      <option value="AQUIRAZ">
+      <option value="ARACATI">
+      <option value="ARACOIABA">
+      <option value="ARARENDA">
+      <option value="ARARIPE">
+      <option value="ARATUBA">
+      <option value="ARNEIROZ">
+      <option value="ASSARE">
+      <option value="AURORA">
+      <option value="BAIXIO">
+      <option value="BANABUIU">
+      <option value="BARBALHA">
+      <option value="BARREIRA">
+      <option value="BARRO">
+      <option value="BARROQUINHA">
+      <option value="BATURITE">
+      <option value="BEBERIBE">
+      <option value="BELA CRUZ">
+      <option value="BOA VIAGEM">
+      <option value="BREJO SANTO">
+      <option value="CAMOCIM">
+      <option value="CAMPOS SALES">
+      <option value="CANINDE">
+      <option value="CAPISTRANO">
+      <option value="CARIDADE">
+      <option value="CARIRE">
+      <option value="CARIRIACU">
+      <option value="CARIUS">
+      <option value="CARNAUBAL">
+      <option value="CASCAVEL">
+      <option value="CATARINA">
+      <option value="CATUNDA">
+      <option value="CAUCAIA">
+      <option value="CEDRO">
+      <option value="CHAVAL">
+      <option value="CHORO">
+      <option value="CHOROZINHO">
+      <option value="COREAU">
+      <option value="CRATEUS">
+      <option value="CRATO">
+      <option value="CROATA">
+      <option value="CRUZ">
+      <option value="DEP.IRAP.PINHEIRO">
+      <option value="ERERE">
+      <option value="EUSEBIO">
+      <option value="FARIAS BRITO">
+      <option value="FORQUILHA">
+      <option value="FORTALEZA">
+      <option value="FORTIM">
+      <option value="FRECHEIRINHA">
+      <option value="GENERAL SAMPAIO">
+      <option value="GRACA">
+      <option value="GRANJA">
+      <option value="GRANJEIRO">
+      <option value="GROAIRAS">
+      <option value="GUAIUBA">
+      <option value="GUARACIABA DO NORTE">
+      <option value="GUARAMIRANGA">
+      <option value="HIDROLANDIA">
+      <option value="HORIZONTE">
+      <option value="IBARETAMA">
+      <option value="IBIAPINA">
+      <option value="IBICUITINGA">
+      <option value="ICAPUI">
+      <option value="ICO">
+      <option value="IGUATU">
+      <option value="INDEPENDENCIA">
+      <option value="IPAPORANGA">
+      <option value="IPAUMIRIM">
+      <option value="IPU">
+      <option value="IPUEIRAS">
+      <option value="IRACEMA">
+      <option value="IRAUCUBA">
+      <option value="ITAICABA">
+      <option value="ITAITINGA">
+      <option value="ITAPAJE">
+      <option value="ITAPIPOCA">
+      <option value="ITAPIUNA">
+      <option value="ITAREMA">
+      <option value="ITATIRA">
+      <option value="J.DE JERICOACOARA">
+      <option value="JAGUARETAMA">
+      <option value="JAGUARIBARA">
+      <option value="JAGUARIBE">
+      <option value="JAGUARUANA">
+      <option value="JARDIM">
+      <option value="JATI">
+      <option value="JUAZEIRO DO NORTE">
+      <option value="JUCAS">
+      <option value="L. DA MANGABEIRA">
+      <option value="LIM. DO NORTE">
+      <option value="MADALENA">
+      <option value="MARACANAU">
+      <option value="MARANGUAPE">
+      <option value="MARCO">
+      <option value="MARTINOPOLE">
+      <option value="MASSAPE">
+      <option value="MAURITI">
+      <option value="MERUOCA">
+      <option value="MILAGRES">
+      <option value="MILHA">
+      <option value="MIRAIMA">
+      <option value="MISSAO VELHA">
+      <option value="MOMBACA">
+      <option value="MONSENHOR TABOSA">
+      <option value="MORADA NOVA">
+      <option value="MORAUJO">
+      <option value="MORRINHOS">
+      <option value="MUCAMBO">
+      <option value="MULUNGU">
+      <option value="NOVA OLINDA">
+      <option value="NOVA RUSSAS">
+      <option value="NOVO ORIENTE">
+      <option value="OCARA">
+      <option value="OROS">
+      <option value="PACAJUS">
+      <option value="PACATUBA">
+      <option value="PACOTI">
+      <option value="PACUJA">
+      <option value="PALHANO">
+      <option value="PALMACIA">
+      <option value="PARACURU">
+      <option value="PARAIPABA">
+      <option value="PARAMBU">
+      <option value="PARAMOTI">
+      <option value="PEDRA BRANCA">
+      <option value="PENAFORTE">
+      <option value="PENTECOSTE">
+      <option value="PEREIRO">
+      <option value="PINDORETAMA">
+      <option value="PIQUET CARNEIRO">
+      <option value="PIRES FERREIRA">
+      <option value="PORANGA">
+      <option value="PORTEIRAS">
+      <option value="POTENGI">
+      <option value="POTIRETAMA">
+      <option value="QUITERIANOPOLIS">
+      <option value="QUIXADA">
+      <option value="QUIXELO">
+      <option value="QUIXERAMOBIM">
+      <option value="QUIXERE">
+      <option value="REDENCAO">
+      <option value="RERIUTABA">
+      <option value="RUSSAS">
+      <option value="S GONCALO DO AMARAN">
+      <option value="S.JOAO JAGUARIBE">
+      <option value="S.LUIS DO CURU">
+      <option value="SABOEIRO">
+      <option value="SALITRE">
+      <option value="SANTANA DO ACARAU">
+      <option value="SANTANA DO CARIRI">
+      <option value="SAO BENEDITO">
+      <option value="SENADOR POMPEU">
+      <option value="SENADOR SA">
+      <option value="SOBRAL">
+      <option value="SOLONOPOLE">
+      <option value="STA QUITERIA">
+      <option value="TABULEIRO DO NORTE">
+      <option value="TAMBORIL">
+      <option value="TARRAFAS">
+      <option value="TAUA">
+      <option value="TEJUCUOCA">
+      <option value="TIANGUA">
+      <option value="TRAIRI">
+      <option value="TURURU">
+      <option value="UBAJARA">
+      <option value="UMARI">
+      <option value="UMIRIM">
+      <option value="URUBURETAMA">
+      <option value="URUOCA">
+      <option value="VARJOTA">
+      <option value="VARZEA ALEGRE">
+      <option value="VICOSA CEARA">
+    </datalist>
+
+  <div class="section">
+    <h3>Descreva detalhes da Atividade</h3>
+    
+    <div class="data-horas">
+      <div class="input-group data-only">
+        <label for="data">DATA:</label>
+        <input type="date" id="data" style="max-width: 262px;">
+      </div>
+
+    <div class="horas-dupla">
+      <div class="input-group">
+        <label for="start-time">HORA INÍCIO:</label>
+        <input type="tel" id="start-time" maxlength="5" placeholder="HH:MM" oninput="formatarHora(this)">
+      </div>
+
+      <div class="input-group">
+        <label for="end-time">HORA FIM:</label>
+        <input type="tel" id="end-time" maxlength="5" placeholder="HH:MM" oninput="formatarHora(this)">
+      </div>
+  </div>
+</div>
+
+    <label>DESCRIÇÃO DO SERVIÇO:</label>
+    <input type="text" id="descricaoServico">
+
+    <label>MATERIAL NOVO UTILIZADO:</label>
+    <input type="text" id="materialnovoutilizado">
+
+    <label>MATERIAL NOVO DEVOLVIDO:</label>
+    <input type="text" id="materialnovodevolvido">
+
+    <label>SUCATA GERADA:</label>
+    <input type="text" id="sucatagerada">
+
+    <div class="realizado-group">
+      <label>SERVIÇO REALIZADO?:</label>
+      <div class="button-group">
+        <button id="btnSim" class="btn-opcao verde" onclick="marcarServico('sim')">SIM</button>
+        <button id="btnNao" class="btn-opcao vermelho" onclick="marcarServico('nao')">NÃO</button>
+      </div>
+      <input type="text" id="comentarioServico" disabled placeholder="Descreva aqui...">
+    </div>
+  </div>
+
+  <h3>Pré-Visualização da Mensagem</h3>
+  <div class="preview-box">Conteúdo gerado aparecerá aqui...</div>
+
+  <div class="button-group">
+    <button class="button-gerar" onclick="gerarMensagem()">GERAR MENSAGEM</button>
+    <button class="button-whatsapp">ENCAMINHAR PARA WHATSAPP</button>
+  </div>
+
+  <img src="logo.png" alt="Logo Enel" class="logo">
+</div>
+
+</body>
+
+<script>
+    
+// -----------------------------------------------------------------------------------------------
+// SCRIPT PARA O FUNCINAMENTO DO CAMPO ORDEM DE SERVIÇO 
+
+    // Função para ativar o comportamento conforme o botão pressionado
+    function configurarInput(tipo) {
+      // Torna o campo de input visível
+      var inputContainer = document.getElementById("input-container");
+      var input = document.getElementById("input-ordem");
+      inputContainer.style.display = "block"; // Torna o input visível
+
+      // Limpa qualquer valor anterior
+      input.value = "";
+      input.removeAttribute("readonly");
+      input.removeAttribute("maxlength");
+      input.setAttribute("oninput", "");
+
+      // Ajusta as configurações conforme o tipo de botão pressionado
+      if (tipo === "INC") {
+        // Permite apenas números, proíbe espaços e limita a 8 dígitos
+        input.setAttribute("oninput", "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);");
+        input.setAttribute("maxlength", "8");
+      } else if (tipo === "DT" || tipo === "BA") {
+        // Preenche o campo com 'DT' ou 'BA' e permite que o usuário complete
+        input.value = tipo;
+        input.setAttribute("maxlength", "10");
+        input.setAttribute("oninput", "this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10);");
+      }
+    }
+// -----------------------------------------------------------------------------------------------
+// SCRIPT PARA DESATIVAR O FUNCIONAMENTEN DE ALGUNS INPUT'S CONFORME A SELEÇÃO DO TIPO DE SERVIÇO
+    
+    function alterarCampos() {
+      const tipoServico = document.getElementById("tiposervico").value;
+
+      const ot = document.getElementById("ot");
+      const sgm = document.getElementById("sgm");
+      const sgd = document.getElementById("sgd");
+      const ane = document.getElementById("ane");
+
+      const btnINC = document.getElementById("btnINC");
+      const btnDT = document.getElementById("btnDT");
+      const btnBA = document.getElementById("btnBA");
+
+      // Sempre começa desabilitando tudo
+      ot.disabled = true;
+      sgm.disabled = true;
+      sgd.disabled = true;
+      ane.disabled = true;
+      btnINC.disabled = true;
+      btnDT.disabled = true;
+      btnBA.disabled = true;
+
+      if (tipoServico === "manutenção corretiva (emergência)") {
+        ot.disabled = true;
+        sgm.disabled = true;
+        sgd.disabled = true;
+        ane.disabled = false;
+        btnINC.disabled = false;
+        btnDT.disabled = false;
+        btnBA.disabled = false;
+      } 
+      else if (tipoServico === "manutenção preventiva (programado)") {
+        ane.disabled = true;
+        btnINC.disabled = true;
+        btnDT.disabled = true;
+        btnBA.disabled = true;
+        ot.disabled = false;
+        sgm.disabled = false;
+        sgd.disabled = false;
+      }
+    }
+
+// -----------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------
+// SCRIPT PARA ADICIONAR : APÓS O SEGUNDO DÍGITO NO PREENCHIMENTO DA HORA 
+
+
+    function formatarHora(campo) {
+      let valor = campo.value.replace(/\D/g, ''); // remove tudo que não for número
+
+      if (valor.length >= 3) {
+        valor = valor.slice(0, 4); // limita a 4 dígitos (HHMM)
+        campo.value = valor.slice(0, 2) + ':' + valor.slice(2);
+      } else {
+        campo.value = valor;
+      }
+    }
+// -----------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------
+// SCRIPT PARA O FUNCIONAMENTO DO BOTÃO SIM E NÃO
+
+
+    function marcarServico(resposta) {
+      const input = document.getElementById("comentarioServico");
+      const btnSim = document.getElementById("btnSim");
+      const btnNao = document.getElementById("btnNao");
+
+      if (resposta === "sim") {
+        input.value = "SERVIÇO 100% REALIZADO";
+        input.disabled = true;
+
+        btnSim.classList.remove("desabilitado");
+        btnNao.classList.add("desabilitado");
+      }
+
+      if (resposta === "nao") {
+        input.value = "";
+        input.disabled = false;
+
+        btnSim.classList.add("desabilitado");
+        btnNao.classList.remove("desabilitado");
+      }
+    }
+// -----------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------
+// SCRIPT PARA GERAR MENSAGEM
+    function gerarMensagem() {
+      let msg = "------- *RETORNO DE CAMPO* -------\n\n";
+
+      // Seção 1: Equipe
+      msg += "---- *DADOS DA EQUIPE* ----\n";
+      msg += `*TIPO DE EQUIPE:* ${getValor('tipoequipe')}\n`;
+      msg += `*LEAD:* ${getValor('equipe')}\n`;
+      msg += `*SUPERVISOR:* ${getValor('supervisor')}\n`;
+      msg += `*NOME DO COMPONENTE:* ${getValor('nomedocomponente')}\n\n`;
+
+      // Seção 2: Serviço
+      msg += "---- *DADOS DO SERVIÇO* ----\n";
+      msg += `*TIPO DE SERVIÇO:* ${getValor('tiposervico')}\n`;
+      msg += `*OT:* ${getValor('ot')}\n`;
+      msg += `*SGM:* ${getValor('sgm')}\n`;
+      msg += `*SGD:* ${getValor('sgd')}\n`;
+      msg += `*ANE:* ${getValor('ane')}\n`;
+      msg += `*ORDEM DE SERVIÇO:* ${getValor('input-ordem')}\n`;
+      msg += `*APR DIGITAL:* ${getValor('apr')}\n\n`;
+
+      // Seção 3: Campo
+      msg += "---- *DADOS DE CAMPO* ----\n";
+      msg += `*TRAFO:* ${getValor('traf')}\n`;
+      msg += `*TOMBAMENTO:* ${getValor('Tomb')}\n`;
+      msg += `*ESTRUTURA:* ${getValor('estrut')}\n`;
+      msg += `*ALIMENTADOR:* ${getValor('alimentador')}\n`;
+      msg += `*ENDEREÇO:* ${getValor('endereco')}\n`;
+      msg += `*MUNICÍPIO:* ${getValor('municipio')}\n\n`;
+
+      // Seção 4: Atividade
+      msg += "---- *ATIVIDADE* ----\n";
+      msg += `*DATA:* ${formatarData(getValor('data'))}\n`;
+      msg += `*HORA INÍCIO:* ${getValor('start-time')}\n`;
+      msg += `*HORA FIM:* ${getValor('end-time')}\n`;
+      msg += `*DESCRIÇÃO:* ${getValor('descricaoServico')}\n\n`;
+
+      // Seção 5: Materiais
+      msg += "---- *MATERIAIS* ----\n";
+      msg += `*MATERIAL NOVO UTILIZADO:* ${getValor('materialnovoutilizado')}\n`;
+      msg += `*MATERIAL NOVO DEVOLVIDO:* ${getValor('materialnovodevolvido')}\n`;
+      msg += `*SUCATA GERADA:* ${getValor('sucatagerada')}\n\n`;
+
+      // Seção 6: Confirmação
+      msg += "---- *STATUS FINAL* ----\n";
+      msg += `*SERVIÇO REALIZADO?:* ${document.getElementById('comentarioServico').value.toUpperCase()}\n`;
+
+      // Exibir na tela
+      document.querySelector('.preview-box').innerText = msg;
+    }
+
+    // Utilitários
+    function getValor(id) {
+      const el = document.getElementById(id);
+      return el && el.value ? el.value.toUpperCase().trim() : "";
+    }
+
+    function formatarData(data) {
+      if (!data) return "";
+      const [ano, mes, dia] = data.split("-");
+      return `${dia}/${mes}/${ano}`;
+    }
+// -----------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------
+// SCRIPT PARA ENCAMINHAR MENSAGEM PARA WHATSAPP
+  // Função para encaminhar para WhatsApp
+  document.querySelector('.button-whatsapp').addEventListener('click', function () {
+    gerarMensagem(); // Gera ou atualiza a mensagem
+    enviarFormulario(); // Envia para a planilha
+
+    // Pega a mensagem da pré-visualização
+    let mensagem = document.querySelector('.preview-box').innerText;
+
+    // Adiciona data e hora atual
+    const agora = new Date();
+    const dia = String(agora.getDate()).padStart(2, '0');
+    const mes = String(agora.getMonth() + 1).padStart(2, '0');
+    const ano = agora.getFullYear();
+    const hora = String(agora.getHours()).padStart(2, '0');
+    const minuto = String(agora.getMinutes()).padStart(2, '0');
+
+    const dataHora = `\n\n*COMPROVANTE DE ENVIO: ${dia}/${mes}/${ano} ${hora}:${minuto}*`;
+    mensagem += dataHora;
+
+    // Atualiza a pré-visualização com a mensagem final (opcional)
+    document.querySelector('.preview-box').innerText = mensagem;
+
+    // Copia a mensagem
+    navigator.clipboard.writeText(mensagem).then(() => {
+      const textoCodificado = encodeURIComponent(mensagem);
+      const urlWhatsapp = `https://wa.me/?text=${textoCodificado}`;
+      window.open(urlWhatsapp, '_blank');
+    }).catch(err => {
+      alert("Erro ao copiar a mensagem.");
+      console.error(err);
+    });
+  });
+// -----------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------
+// SCRIPT PARA ENVIAR DADOS PARA PLANILHA VIA SHEETDB.IO
+    function enviarFormulario() {
+      const dados = {
+        COMPROVANTE_DE_REGISTRO: new Date().toLocaleString('pt-BR'),
+        TIPO_DE_EQUIPE: document.getElementById("tipoequipe").value,
+        LEAD: document.getElementById("lead").value,
+        SUPERVISOR: document.getElementById("supervisor").value,
+        COMPONENTE: document.getElementById("componente").value,
+        TIPO_DE_SERVIÇO: document.getElementById("tiposervico").value,
+        ORDEM_DE_SERVIÇO: document.getElementById("input-ordem").value,
+        OT: document.getElementById("ot").value,
+        SGM: document.getElementById("sgm").value,
+        SGD: document.getElementById("sgd").value,
+        ANE: document.getElementById("ane").value,
+        APR: document.getElementById("apr").value,
+        TRAFO: document.getElementById("traf").value,
+        TOMBAMENTO: document.getElementById("Tomb").value,
+        ESTRUTURA: document.getElementById("estrut").value,
+        ALIMENTADOR: document.getElementById("alimentador").value,
+        ENDEREÇO: document.getElementById("endereco").value,
+        MUNICIPIO: document.getElementById("municipio").value,
+        DATA_EXECUÇÃO: document.getElementById("data").value,
+        HORA_INICIO: document.getElementById("start-time").value,
+        HORA_FIM: document.getElementById("end-time").value,
+        DESCRICAO_DO_SERVIÇO: document.getElementById("descricaoServico").value,
+        MATERIAL_UTILIZADO: document.getElementById("materialnovoutilizado").value,
+        MATERIAL_DEVOLVIDO: document.getElementById("materialnovodevolvido").value,
+        SUCATA_GERADA: document.getElementById("sucatagerada").value,
+        SERVIÇO_REALIZADO: document.getElementById("comentarioServico").value,
+      };
+
+      fetch("https://<URL_DO_SEU_CLOUD_RUN>/registrar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados)
+      })
+      .then(res => res.json())
+      .then(response => {
+        alert("Formulário enviado com sucesso!");
+        // Aqui você pode abrir o WhatsApp ou copiar a mensagem se quiser
+      })
+      .catch(error => {
+        console.error("Erro ao enviar:", error);
+        alert("Falha no envio.");
+      });
+    }
+  
+// -----------------------------------------------------------------------------------------------
+
+</script>
+</html>
