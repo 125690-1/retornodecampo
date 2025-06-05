@@ -251,7 +251,7 @@
     <h3>Preencha os dados da Equipe</h3>
     
     <label for="tipoequipe">TIPO DE EQUIPE:</label>
-    <select id="tipoequipe" onchange="verificarOutroLead()">
+    <select id="tipoequipe">
       <option value=""></option>
       <option value="leve">LEVE</option>
       <option value="linha viva">LINHA VIVA</option>
@@ -1189,9 +1189,9 @@
       const dados = {
         COMPROVANTE_DE_REGISTRO: new Date().toLocaleString('pt-BR'),
         TIPO_DE_EQUIPE: document.getElementById("tipoequipe").value,
-        LEAD: document.getElementById("lead").value,
+        LEAD: document.getElementById("equipe").value,
         SUPERVISOR: document.getElementById("supervisor").value,
-        COMPONENTE: document.getElementById("componente").value,
+        COMPONENTE: document.getElementById("nomedocomponente").value,
         TIPO_DE_SERVIÇO: document.getElementById("tiposervico").value,
         ORDEM_DE_SERVIÇO: document.getElementById("input-ordem").value,
         OT: document.getElementById("ot").value,
