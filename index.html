@@ -1152,10 +1152,55 @@
 // SCRIPT PARA ENCAMINHAR MENSAGEM PARA WHATSAPP
   // Função para encaminhar para WhatsApp
   document.querySelector('.button-whatsapp').addEventListener('click', function () {
-    gerarMensagem(); // Gera ou atualiza a mensagem
-    enviarFormulario(); // Envia para a planilha
+    const camposObrigatorios = [
+      { id: 'equipe', nome: 'LEAD' },
+      { id: 'supervisor', nome: 'SUPERVISOR' },
+      { id: 'nomedocomponente', nome: 'NOME DO COMPONENTE' },
+      { id: 'tiposervico', nome: 'TIPO DE SERVIÇO' },
+      { id: 'apr', nome: 'APR DIGITAL' },
+      { id: 'Tomb', nome: 'TOMBAMENTO' },
+      { id: 'alimentador', nome: 'ALIMENTADOR' },
+      { id: 'endereco', nome: 'ENDEREÇO' },
+      { id: 'municipio', nome: 'MUNICÍPIO' },
+      { id: 'data', nome: 'DATA' },
+      { id: 'start-time', nome: 'HORÁRIO INÍCIO' },
+      { id: 'end-time', nome: 'HORÁRIO FIM' },
+      { id: 'descricaoServico', nome: 'DESCRIÇÃO DO SERVIÇO' },
+      { id: 'materialnovoutilizado', nome: 'MATERIAL NOVO UTILIZADO' },
+      { id: 'materialnovodevolvido', nome: 'MATERIAL NOVO DEVOLVIDO' },
+      { id: 'sucatagerada', nome: 'SUCATA GERADA' },
+      { id: 'comentarioServico', nome: 'SERVIÇO REALIZADO' },
+    ];
 
-    // Pega a mensagem da pré-visualização
+    const tipoServico = document.getElementById('tiposervico').value;
+    const camposExtras = [];
+
+    if (tipoServico === "manutenção preventiva (programado)") {
+      camposExtras.push({ id: 'ot', nome: 'OT' });
+      camposExtras.push({ id: 'sgm', nome: 'SGM' });
+      camposExtras.push({ id: 'sgd', nome: 'SGD' });
+    } else if (tipoServico === "manutenção corretiva (emergência)") {
+      camposExtras.push({ id: 'ane', nome: 'ANE' });
+      camposExtras.push({ id: 'input-ordem', nome: 'ORDEM DE SERVIÇO' });
+    }
+
+    const todosCampos = [...camposObrigatorios, ...camposExtras];
+    const faltando = todosCampos.filter(campo => {
+      const valor = document.getElementById(campo.id)?.value?.trim();
+      return !valor;
+    });
+
+    if (faltando.length > 0) {
+      const mensagem = "⚠️ Preencha os seguintes campos obrigatórios:\n\n" +
+        faltando.map(f => "- " + f.nome).join("\n");
+      alert(mensagem);
+      return;
+    }
+
+   // Se chegou aqui é porque todos os campos foram preenchidos
+
+    gerarMensagem();
+
     let mensagem = document.querySelector('.preview-box').innerText;
 
     // Adiciona data e hora atual
@@ -1165,18 +1210,16 @@
     const ano = agora.getFullYear();
     const hora = String(agora.getHours()).padStart(2, '0');
     const minuto = String(agora.getMinutes()).padStart(2, '0');
-
     const dataHora = `\n\n*COMPROVANTE DE ENVIO: ${dia}/${mes}/${ano} ${hora}:${minuto}*`;
     mensagem += dataHora;
 
-    // Atualiza a pré-visualização com a mensagem final (opcional)
     document.querySelector('.preview-box').innerText = mensagem;
 
-    // Copia a mensagem
     navigator.clipboard.writeText(mensagem).then(() => {
       const textoCodificado = encodeURIComponent(mensagem);
       const urlWhatsapp = `https://wa.me/?text=${textoCodificado}`;
       window.open(urlWhatsapp, '_blank');
+      enviarFormulario();
     }).catch(err => {
       alert("Erro ao copiar a mensagem.");
       console.error(err);
