@@ -455,7 +455,7 @@
         "SEM_NOME";
 
       const nomeArquivo = `FOTOS_${nomeBase}.pdf`;
-      const blob = pdf.output('blob');
+      const blob = pdf.output('blob', { type: 'application/pdf' });
 
       // Download automático
       const link = document.createElement("a");
