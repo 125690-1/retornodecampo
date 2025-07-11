@@ -168,6 +168,10 @@
     background-color: #ec407a;
   }
 
+  .amarelo {
+    background-color: #f4b400;
+  }
+
   .desabilitado {
     background-color: #ccc !important;
     cursor: default;
@@ -238,6 +242,13 @@
       display: none; /* O input começa invisível */
       margin-top: 10px;
     }
+  
+  input[type="file"] {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
 </style>
 </head>
 
@@ -378,10 +389,15 @@
       <label>SERVIÇO REALIZADO?:</label>
       <div class="button-group">
         <button id="btnSim" class="btn-opcao verde" onclick="marcarServico('sim')">SIM</button>
+        <button id="btnParcial" class="btn-opcao amarelo" onclick="marcarServico('parcial')">PARCIAL</button>
         <button id="btnNao" class="btn-opcao vermelho" onclick="marcarServico('nao')">NÃO</button>
       </div>
       <input type="text" id="comentarioServico" disabled placeholder="Descreva aqui...">
     </div>
+    
+    <label for="inputFotos">ANEXAR FOTOS:</label>
+    <input type="file" id="inputFotos" accept="image/*" multiple>
+
   </div>
 
   <h3>Pré-Visualização da Mensagem</h3>
@@ -395,9 +411,84 @@
   <img src="logo.png" alt="Logo Enel" class="logo">
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </body>
 
 <script>
+
+    async function gerarPDFdasFotos() {
+      const input = document.getElementById('inputFotos');
+      const files = Array.from(input.files).sort((a, b) => a.name.localeCompare(b.name));
+
+      if (files.length === 0) return null;
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
+      const margin = 10;
+      const maxWidth = pdf.internal.pageSize.getWidth() - margin * 2;
+      const maxHeight = pdf.internal.pageSize.getHeight() - margin * 2;
+
+      for (let i = 0; i < files.length; i++) {
+        const imgData = await readFileAsDataURL(files[i]);
+        const img = new Image();
+        img.src = imgData;
+
+        await new Promise(resolve => {
+          img.onload = () => {
+            const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+            const imgWidth = img.width * ratio;
+            const imgHeight = img.height * ratio;
+            const x = (pdf.internal.pageSize.getWidth() - imgWidth) / 2;
+            const y = (pdf.internal.pageSize.getHeight() - imgHeight) / 2;
+            pdf.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
+            if (i < files.length - 1) pdf.addPage();
+            resolve();
+          };
+        });
+      }
+
+      const nomeBase =
+        document.getElementById("input-ordem").value.trim() ||
+        document.getElementById("ane").value.trim() ||
+        document.getElementById("sgm").value.trim() ||
+        "SEM_NOME";
+
+      const nomeArquivo = `FOTOS_${nomeBase}.pdf`;
+      const blob = pdf.output('blob');
+
+      // Download automático
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = nomeArquivo;
+      link.click();
+
+      // Envio para o backend
+      const formData = new FormData();
+      formData.append("pdf", blob, nomeArquivo);
+
+      fetch("https://retorno-campo-818351890829.southamerica-east1.run.app/upload_pdf", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log("Upload concluído:", data);
+      })
+      .catch(err => {
+        console.error("Erro ao enviar PDF:", err);
+      });
+
+      return true;
+    }
+
+    function readFileAsDataURL(file) {
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+    }
     
 // -----------------------------------------------------------------------------------------------
 // SCRIPT PARA O FUNCINAMENTO DO CAMPO ORDEM DE SERVIÇO 
@@ -495,21 +586,28 @@
       const input = document.getElementById("comentarioServico");
       const btnSim = document.getElementById("btnSim");
       const btnNao = document.getElementById("btnNao");
+      const btnParcial = document.getElementById("btnParcial");
+
+      // Resetar todos
+      btnSim.classList.remove("desabilitado");
+      btnNao.classList.remove("desabilitado");
+      btnParcial.classList.remove("desabilitado");
 
       if (resposta === "sim") {
         input.value = "SERVIÇO 100% REALIZADO";
         input.disabled = true;
-
-        btnSim.classList.remove("desabilitado");
         btnNao.classList.add("desabilitado");
-      }
-
-      if (resposta === "nao") {
+        btnParcial.classList.add("desabilitado");
+      } else if (resposta === "nao") {
         input.value = "";
         input.disabled = false;
-
         btnSim.classList.add("desabilitado");
-        btnNao.classList.remove("desabilitado");
+        btnParcial.classList.add("desabilitado");
+      } else if (resposta === "parcial") {
+        input.value = "SERVIÇO REALIZADO PARCIALMENTE";
+        input.disabled = true;
+        btnSim.classList.add("desabilitado");
+        btnNao.classList.add("desabilitado");
       }
     }
 // -----------------------------------------------------------------------------------------------
@@ -587,7 +685,7 @@
 // -----------------------------------------------------------------------------------------------
 // SCRIPT PARA ENCAMINHAR MENSAGEM PARA WHATSAPP
   // Função para encaminhar para WhatsApp
-  document.querySelector('.button-whatsapp').addEventListener('click', function () {
+  document.querySelector('.button-whatsapp').addEventListener('click', async function () {
     const camposObrigatorios = [
       { id: 'equipe', nome: 'LEAD' },
       { id: 'supervisor', nome: 'SUPERVISOR' },
@@ -634,6 +732,7 @@
 
    // Se chegou aqui é porque todos os campos foram preenchidos
 
+    await gerarPDFdasFotos();
     gerarMensagem();
 
     let mensagem = document.querySelector('.preview-box').innerText;
