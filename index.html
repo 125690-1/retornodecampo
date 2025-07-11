@@ -799,9 +799,10 @@
         SERVIÇO_REALIZADO: document.getElementById("comentarioServico").value,
       };
 
-      fetch("https://retorno-campo-818351890829.southamerica-east1.run.app/upload_pdf", {
+      fetch("https://retorno-campo-818351890829.southamerica-east1.run.app/registrar", {
         method: "POST",
-        body: formData
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados)
       })
       .then(res => res.json())
       .then(response => {
