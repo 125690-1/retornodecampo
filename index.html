@@ -467,7 +467,7 @@
       const formData = new FormData();
       formData.append("pdf", blob, nomeArquivo);
 
-      fetch("https://retorno-campo-818351890829.southamerica-east1.run.app/upload_pdf", {
+      fetch("https://backend-entrega-documentos-818351890829.southamerica-east1.run.app/upload_pdf", {
         method: "POST",
         body: formData
       })
