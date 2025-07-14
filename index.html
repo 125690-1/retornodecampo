@@ -417,11 +417,10 @@
 
 <script>
 
-    async function gerarPDFdasFotos() {
+    async function gerarEPushPDF() {
       const input = document.getElementById('inputFotos');
       const files = Array.from(input.files).sort((a, b) => a.name.localeCompare(b.name));
-
-      if (files.length === 0) return null;
+      if (files.length === 0) return alert("Nenhuma imagem selecionada.");
 
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF();
@@ -455,7 +454,7 @@
         "SEM_NOME";
 
       const nomeArquivo = `FOTOS_${nomeBase}.pdf`;
-      const blob = pdf.output('blob', { type: 'application/pdf' });
+      const blob = pdf.output('blob');
 
       // Download automático
       const link = document.createElement("a");
@@ -463,23 +462,25 @@
       link.download = nomeArquivo;
       link.click();
 
-      // Envio para o backend
+      // === Enviar para backend ===
       const formData = new FormData();
-      formData.append("pdf", blob, nomeArquivo);
+      formData.append("file", blob, nomeArquivo);
+      formData.append("ordem_servico", nomeBase);
+      formData.append("categoria", "EVIDÊNCIAS DA EXECUÇÃO DO SERVIÇO");
 
-      fetch("https://backend-entrega-documentos-818351890829.southamerica-east1.run.app/upload_pdf", {
+      fetch("https://backend-entrega-documentos-818351890829.southamerica-east1.run.app/upload", {
         method: "POST",
         body: formData
       })
       .then(res => res.json())
       .then(data => {
-        console.log("Upload concluído:", data);
+        console.log("✅ Upload concluído:", data);
+        alert("PDF enviado com sucesso!");
       })
       .catch(err => {
-        console.error("Erro ao enviar PDF:", err);
+        console.error("❌ Erro ao enviar PDF:", err);
+        alert("Erro ao enviar PDF.");
       });
-
-      return true;
     }
 
     function readFileAsDataURL(file) {
