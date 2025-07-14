@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -396,6 +397,7 @@
     
     <label for="inputFotos">ANEXAR FOTOS:</label>
     <input type="file" id="inputFotos" accept="image/*" multiple>
+    <button type="button" onclick="enviarFotos()">Enviar Fotos</button>
 
   </div>
 
@@ -415,80 +417,6 @@
 </body>
 
 <script>
-
-    async function gerarEPushPDF() {
-      const input = document.getElementById('inputFotos');
-      const files = Array.from(input.files).sort((a, b) => a.name.localeCompare(b.name));
-      if (files.length === 0) return alert("Nenhuma imagem selecionada.");
-
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF();
-      const margin = 10;
-      const maxWidth = pdf.internal.pageSize.getWidth() - margin * 2;
-      const maxHeight = pdf.internal.pageSize.getHeight() - margin * 2;
-
-      for (let i = 0; i < files.length; i++) {
-        const imgData = await readFileAsDataURL(files[i]);
-        const img = new Image();
-        img.src = imgData;
-
-        await new Promise(resolve => {
-          img.onload = () => {
-            const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
-            const imgWidth = img.width * ratio;
-            const imgHeight = img.height * ratio;
-            const x = (pdf.internal.pageSize.getWidth() - imgWidth) / 2;
-            const y = (pdf.internal.pageSize.getHeight() - imgHeight) / 2;
-            pdf.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
-            if (i < files.length - 1) pdf.addPage();
-            resolve();
-          };
-        });
-      }
-
-      const nomeBase =
-        document.getElementById("input-ordem").value.trim() ||
-        document.getElementById("ane").value.trim() ||
-        document.getElementById("sgm").value.trim() ||
-        "SEM_NOME";
-
-      const nomeArquivo = `FOTOS_${nomeBase}.pdf`;
-      const blob = pdf.output('blob');
-
-      // Download automático
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = nomeArquivo;
-      link.click();
-
-      // === Enviar para backend ===
-      const formData = new FormData();
-      formData.append("file", blob, nomeArquivo);
-      formData.append("ordem_servico", nomeBase);
-      formData.append("categoria", "EVIDÊNCIAS DA EXECUÇÃO DO SERVIÇO");
-
-      fetch("https://backend-entrega-documentos-818351890829.southamerica-east1.run.app/upload", {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log("✅ Upload concluído:", data);
-        alert("PDF enviado com sucesso!");
-      })
-      .catch(err => {
-        console.error("❌ Erro ao enviar PDF:", err);
-        alert("Erro ao enviar PDF.");
-      });
-    }
-
-    function readFileAsDataURL(file) {
-      return new Promise(resolve => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.readAsDataURL(file);
-      });
-    }
     
 // -----------------------------------------------------------------------------------------------
 // SCRIPT PARA O FUNCINAMENTO DO CAMPO ORDEM DE SERVIÇO 
@@ -732,7 +660,6 @@
 
    // Se chegou aqui é porque todos os campos foram preenchidos
 
-    await gerarEPushPDF();
     gerarMensagem();
 
     let mensagem = document.querySelector('.preview-box').innerText;
@@ -817,6 +744,69 @@
   
 // -----------------------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------------------
+  function enviarFotos() {
+    const input = document.getElementById('inputFotos');
+    const files = Array.from(input.files);
+    if (files.length === 0) return alert("Nenhuma imagem selecionada.");
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    const margin = 10;
+    const maxWidth = pdf.internal.pageSize.getWidth() - margin * 2;
+    const maxHeight = pdf.internal.pageSize.getHeight() - margin * 2;
+
+    const promises = files.sort((a, b) => a.name.localeCompare(b.name)).map(file => {
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+            const imgWidth = img.width * ratio;
+            const imgHeight = img.height * ratio;
+            const x = (pdf.internal.pageSize.getWidth() - imgWidth) / 2;
+            const y = (pdf.internal.pageSize.getHeight() - imgHeight) / 2;
+            pdf.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
+            pdf.addPage();
+            resolve();
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(promises).then(() => {
+      pdf.deletePage(pdf.getNumberOfPages()); // Remove última página extra
+      const blob = pdf.output('blob');
+
+      const nome = document.getElementById("input-ordem").value.trim()
+                || document.getElementById("ane").value.trim()
+                || document.getElementById("sgm").value.trim()
+                || document.getElementById("ot").value.trim();
+
+      const formData = new FormData();
+      formData.append("file", blob, "fotos.pdf");
+      formData.append("ordem_servico", document.getElementById("input-ordem").value.trim());
+      formData.append("ane", document.getElementById("ane").value.trim());
+      formData.append("sgm", document.getElementById("sgm").value.trim());
+      formData.append("ot", document.getElementById("ot").value.trim());
+
+      fetch("https://backend-entrega-documentos-818351890829.southamerica-east1.run.app/upload-fotos", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        console.log("✅ Upload:", data);
+      })
+      .catch(err => {
+        alert("Erro ao enviar PDF.");
+        console.error("❌ Erro:", err);
+      });
+    });
+  }
 
   const listaNomes = [ 
     "ADAILTON JOSE DA SILVA",
