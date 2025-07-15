@@ -792,13 +792,19 @@
         method: "POST",
         body: formData
       })
-      .then(res => res.json())
-      .then(data => {
+      .then(async res => {
+        const isJson = res.headers.get("content-type")?.includes("application/json");
+        const data = isJson ? await res.json() : null;
+      
+        if (!res.ok) {
+          throw new Error(data?.message || `Erro ${res.status}`);
+        }
+      
         alert(data.message);
         console.log("✅ Upload:", data);
       })
       .catch(err => {
-        alert("Erro ao enviar PDF.");
+        alert("Erro ao enviar PDF: " + err.message);
         console.error("❌ Erro:", err);
       });
     });
