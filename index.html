@@ -755,56 +755,59 @@
     const maxWidth = pdf.internal.pageSize.getWidth() - margin * 2;
     const maxHeight = pdf.internal.pageSize.getHeight() - margin * 2;
 
-    const promises = files
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((file, index) => {
-        return new Promise(resolve => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            const img = new Image();
-            img.onload = () => {
-              const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
-              const imgWidth = img.width * ratio;
-              const imgHeight = img.height * ratio;
-              const x = (pdf.internal.pageSize.getWidth() - imgWidth) / 2;
-              const y = (pdf.internal.pageSize.getHeight() - imgHeight) / 2;
-              if (index > 0) pdf.addPage();
-              pdf.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
-              resolve();
-            };
-            img.src = reader.result;
+    const promises = files.sort((a, b) => a.name.localeCompare(b.name)).map(file => {
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+            const imgWidth = img.width * ratio;
+            const imgHeight = img.height * ratio;
+            const x = (pdf.internal.pageSize.getWidth() - imgWidth) / 2;
+            const y = (pdf.internal.pageSize.getHeight() - imgHeight) / 2;
+            pdf.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
+            pdf.addPage();
+            resolve();
           };
-          reader.readAsDataURL(file);
-        });
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
       });
+    });
 
     Promise.all(promises).then(() => {
-      const blob = pdf.output('blob');
+      pdf.deletePage(pdf.getNumberOfPages()); // remove última página vazia
 
+      // 🔽 Baixa o PDF no dispositivo
+      const nomeBase = document.getElementById("input-ordem").value.trim()
+                    || document.getElementById("ane").value.trim()
+                    || document.getElementById("sgm").value.trim()
+                    || document.getElementById("ot").value.trim()
+                    || "fotos";
+      const nomeArquivo = `FOTOS ${nomeBase}.pdf`;
+      pdf.save(nomeArquivo);
+
+      // ⏫ Envia o PDF ao backend
+      const blob = pdf.output('blob');
       const formData = new FormData();
-      formData.append("file", blob, "fotos.pdf");
+      formData.append("file", blob, nomeArquivo);
       formData.append("ordem_servico", document.getElementById("input-ordem").value.trim());
       formData.append("ane", document.getElementById("ane").value.trim());
       formData.append("sgm", document.getElementById("sgm").value.trim());
       formData.append("ot", document.getElementById("ot").value.trim());
 
-      fetch("https://backend-envio-pdf-email-818351890829.southamerica-east1.run.app/enviar-pdf", {
+      fetch("https://backend-envio-pdf-email-818351890829.southamerica-east1.run.app/upload-fotos", {
         method: "POST",
         body: formData
       })
-      .then(async res => {
-        const isJson = res.headers.get("content-type")?.includes("application/json");
-        const data = isJson ? await res.json() : null;
-      
-        if (!res.ok) {
-          throw new Error(data?.message || `Erro ${res.status}`);
-        }
-      
+      .then(res => res.json())
+      .then(data => {
         alert(data.message);
         console.log("✅ Upload:", data);
       })
       .catch(err => {
-        alert("Erro ao enviar PDF: " + err.message);
+        alert("Erro ao enviar PDF.");
         console.error("❌ Erro:", err);
       });
     });
